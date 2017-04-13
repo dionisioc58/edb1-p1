@@ -7,6 +7,8 @@
 
 using namespace std;
 
+long int passo = 1000;
+
 long int linear_search(long int A[], long int size, long int k){
 
 	long int i;
@@ -95,7 +97,6 @@ long int binary_search_recursive(long int A[], long int first, long int end, lon
 
 }
 
-
 void quickSort(long int arr[], int left, int right) {
     int i = left, j = right;
     int tmp;
@@ -119,7 +120,7 @@ void quickSort(long int arr[], int left, int right) {
         quickSort(arr, i, right);
 }
 
-bool gerarGnuSet(string nome, string titulo, int max_x, int max_y) {
+bool gerarGnuSet(string nome, string titulo, int min_x, int max_x, int max_y) {
 	ofstream saida("./gnuplot/" + nome + ".gnuplot");
 	if(!saida) return false;
 
@@ -129,11 +130,13 @@ bool gerarGnuSet(string nome, string titulo, int max_x, int max_y) {
 	saida << "set output './images/" + nome + ".png'" << endl;
 	saida << "set title '" + titulo + "'" << endl;
 	saida << "set grid" << endl;
-	saida << "set xrange[0:";
+	saida << "set xrange[";
+	saida << min_x;
+	saida << ":";
 	saida << max_x;
 	saida << "]" << endl;
 	saida << "set xtics ";
-	saida << (int)(max_x/10);
+	saida << passo;
 	saida << endl;
 	saida << "set xlabel 'Tamanho do vetor'" << endl;
 	saida << "set ylabel 'Número de passos'" << endl;
@@ -156,12 +159,11 @@ bool gerarGnuSet(string nome, string titulo, int max_x, int max_y) {
 int main(){
 
 	//Variáveis
-	long int i, melhorCaso, medioCaso, piorCaso, size, r1 = 0, r2 = 0, r3 = 0, maximo, opcao;
+	long int i, melhorCaso, medioCaso, piorCaso, size, r1 = 0, r2 = 0, r3 = 0, maximo, opcao, inicial;
 	long int max = 0;//Para o máximo de y no gnuplot
 	ofstream saida;
 	double mBSI1 = 0, mBSI2 = 0, mBSI3 = 0, mBSR1 = 0, mBSR2 = 0, mBSR3 = 0, mBBI1 = 0, mBBI2 = 0, mBBI3 = 0, mBBR1 = 0, mBBR2 = 0, mBBR3 = 0;
-	size = 100;
-	maximo = 1000;
+	
 	srand((unsigned)time(0));
 
 	std::cout << "Entre com o método que deseja aplicar: " << std::endl;
@@ -172,7 +174,7 @@ int main(){
 
 	std::cin >> opcao;
 
-	long int *A = new long int[size];
+	long int *A = new long int[1];
 
 	switch(opcao) {
 		case 1:
@@ -181,8 +183,14 @@ int main(){
 		std::cout << "# N Melhor Caso Caso Médio Pior Caso It1 It2 It3" << std::endl;
 		saida.open("./data/BSI.dat");
 
+		//Inicializando tamanhos
+		inicial = 190000; 
+		size    = inicial;
+		maximo  = 200000;
+
 		while(size <= maximo){
 			delete[] A;
+			
 			A = new long int[size];
 
 			//Preenchendo o Array A
@@ -244,11 +252,11 @@ int main(){
 			r2 = 0;
 			r3 = 0;
 			//Aumentando a amostra em Progressão Aritimética
-			size = size + 100;
+			size = size + passo;
 
 		}
 		//Gerar o arquivo relatorio.gnuplot
-		gerarGnuSet("BSI","Busca Sequencial Iterativa", maximo, max);
+		gerarGnuSet("BSI","Busca Sequencial Iterativa", inicial, maximo, max);
 		break;
 
 		case 2:
@@ -257,6 +265,11 @@ int main(){
 		std::cout << "# N Melhor Caso Caso Médio Pior Caso" << std::endl;
 		saida.open("./data/BSR.dat");
 
+		//Inicializando tamanhos
+		inicial =  90000; 
+		size    = inicial;
+		maximo  = 100000;
+		
 		while(size <= maximo){
 			delete[] A;
 			A = new long int[size];
@@ -321,11 +334,11 @@ int main(){
 			r3 = 0;
 
 			//Aumentando a amostra em Progressão Aritimética
-			size = size + 100;
+			size = size + passo;
 
 		}
 		//Gerar o arquivo relatorio.gnuplot
-		gerarGnuSet("BSR", "Busca Sequencial Recursiva", maximo, max);
+		gerarGnuSet("BSR", "Busca Sequencial Recursiva", inicial, maximo, max);
 		break;
 
 		case 3:
@@ -333,7 +346,13 @@ int main(){
 		std::cout << "# Arquivo Gnuplot para busca binária iterativa" << std::endl;
 		std::cout << "# N Melhor Caso Caso Médio Pior Caso It1 It2 It3" << std::endl;
 		saida.open("./data/BBI.dat");
-
+		
+		//Inicializando tamanhos
+		inicial = 1000000; 
+		size    = inicial;
+		maximo  = 1100000;
+		passo   =   10000;
+		
 		while(size <= maximo){
 			delete[] A;
 			A = new long int[size];
@@ -399,11 +418,11 @@ int main(){
 			r3 = 0;
 
 			//Aumentando a amostra em Progressão Aritimética
-			size = size + 100;
+			size = size + passo;
 
 		}
 		//Gerar o arquivo relatorio.gnuplot
-		gerarGnuSet("BBI", "Busca Binária Iterativa", maximo, max);
+		gerarGnuSet("BBI", "Busca Binária Iterativa", inicial, maximo, max);
 		break;
 		
 		case 4:
@@ -412,6 +431,12 @@ int main(){
 		std::cout << "# N Melhor Caso Caso Médio Pior Caso" << std::endl;
 		saida.open("./data/BBR.dat");
 
+		//Inicializando tamanhos
+		inicial = 1000000; 
+		size    = inicial;
+		maximo  = 1100000;
+		passo   =   10000;
+		
 		while(size <= maximo){
 			delete[] A;
 			A = new long int[size];
@@ -478,11 +503,11 @@ int main(){
 			r3 = 0;
 
 			//Aumentando a amostra em Progressão Aritimética
-			size = size + 100;
+			size = size + passo;
 
 		}
 		//Gerar o arquivo relatorio.gnuplot
-		gerarGnuSet("BBR", "Busca Binária Recursiva", maximo, max);
+		gerarGnuSet("BBR", "Busca Binária Recursiva", inicial, maximo, max);
 		break;
 
 		default:
