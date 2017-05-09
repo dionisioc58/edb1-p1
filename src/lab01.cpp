@@ -97,6 +97,23 @@ long int binary_search_recursive(long int A[], long int first, long int end, lon
 
 }
 
+int selectionSort(long int *V, long int N) {
+	int menor, troca;
+	for(int i = 0; i < (N - 1); i++) {
+		menor = i;
+		for(int j = (i + 1); j < N; j++) {
+			if(V[j] < V[menor])
+				menor = j;
+		}
+		if(i != menor) {
+			troca = V[i];
+			V[i] = V[menor];
+			V[menor] = troca;
+		}
+	}
+	return 0;
+}
+
 void quickSort(long int arr[], int left, int right) {
     int i = left, j = right;
     int tmp;
@@ -136,7 +153,7 @@ bool gerarGnuSet(string nome, string titulo, int min_x, int max_x, int max_y) {
 	saida << max_x;
 	saida << "]" << endl;
 	saida << "set xtics ";
-	saida << passo;
+	saida << (int)((max_x-min_x)/20);
 	saida << endl;
 	saida << "set xlabel 'Tamanho do vetor'" << endl;
 	saida << "set ylabel 'Número de passos'" << endl;
@@ -163,6 +180,7 @@ int main(){
 	long int max = 0;//Para o máximo de y no gnuplot
 	ofstream saida;
 	double mBSI1 = 0, mBSI2 = 0, mBSI3 = 0, mBSR1 = 0, mBSR2 = 0, mBSR3 = 0, mBBI1 = 0, mBBI2 = 0, mBBI3 = 0, mBBR1 = 0, mBBR2 = 0, mBBR3 = 0;
+	double mSSI1 = 0, mSSI2 = 0, mSSI3 = 0;
 	
 	srand((unsigned)time(0));
 
@@ -171,6 +189,7 @@ int main(){
 	std::cout << "(2) Busca sequencial recursiva;" << std::endl;
 	std::cout << "(3) Busca binária iterativa." << std::endl;
 	std::cout << "(4) Busca binária recursiva." << std::endl;
+	std::cout << "(5) Selection Sort Iterativa." << std::endl;
 
 	std::cin >> opcao;
 
@@ -184,9 +203,10 @@ int main(){
 		saida.open("./data/BSI.dat");
 
 		//Inicializando tamanhos
-		inicial = 190000; 
+		inicial = 10000; 
 		size    = inicial;
 		maximo  = 200000;
+		passo   =  3000;
 
 		while(size <= maximo){
 			delete[] A;
@@ -266,9 +286,10 @@ int main(){
 		saida.open("./data/BSR.dat");
 
 		//Inicializando tamanhos
-		inicial =  90000; 
+		inicial =  10000; 
 		size    = inicial;
 		maximo  = 100000;
+		passo   =   8000;
 		
 		while(size <= maximo){
 			delete[] A;
@@ -348,10 +369,10 @@ int main(){
 		saida.open("./data/BBI.dat");
 		
 		//Inicializando tamanhos
-		inicial = 1000000; 
+		inicial =   10000; 
 		size    = inicial;
 		maximo  = 1100000;
-		passo   =   10000;
+		passo   =   50000;
 		
 		while(size <= maximo){
 			delete[] A;
@@ -432,10 +453,10 @@ int main(){
 		saida.open("./data/BBR.dat");
 
 		//Inicializando tamanhos
-		inicial = 1000000; 
+		inicial =   10000; 
 		size    = inicial;
 		maximo  = 1100000;
-		passo   =   10000;
+		passo   =   50000;
 		
 		while(size <= maximo){
 			delete[] A;
@@ -508,6 +529,99 @@ int main(){
 		}
 		//Gerar o arquivo relatorio.gnuplot
 		gerarGnuSet("BBR", "Busca Binária Recursiva", inicial, maximo, max);
+		break;
+
+		case 5:
+		
+		std::cout << "# Arquivo Gnuplot para selectionSort iterativo" << std::endl;
+		std::cout << "# N Melhor Caso Caso Médio Pior Caso" << std::endl;
+		saida.open("./data/SSI.dat");
+
+		//Inicializando tamanhos
+		inicial =   10000; 
+		size    = inicial;
+		maximo  =  100000;
+		passo   =   10000;
+
+		while(size <= maximo){
+			delete[] A;
+			A = new long int[size];
+
+			//Verificando a média (100 repetições)
+			for(i = 0; i < 100; i++){
+
+				//Selection Sort Iterativo (melhorCaso)
+				
+				//Preenchendo o Array A ordenado
+				for(i = 0; i < size; i++){
+					A[i] = i;
+				}
+				auto sSSI1 = std::chrono::steady_clock::now();
+				//========================================================================================
+				r1 += selectionSort(A, size);
+				//========================================================================================
+				auto eSSI1 = std::chrono::steady_clock::now();
+				auto dSSI1 = eSSI1 - sSSI1;
+				mSSI1 = mSSI1 + std::chrono::duration <double, std::milli> (dSSI1).count();
+
+				//Selection Sort Iterativo (médioCaso)
+				
+				//Preenchendo o Array A ordenado
+				for(i = 0; i < size; i++){
+					if(i < (size / 2))
+						A[i] = i;
+					else
+						A[i] = rand()%size;
+				}
+				auto sSSI2 = std::chrono::steady_clock::now();
+				//========================================================================================
+				r1 += selectionSort(A, size);
+				//========================================================================================
+				auto eSSI2 = std::chrono::steady_clock::now();
+				auto dSSI2 = eSSI2 - sSSI2;
+				mSSI2 = mSSI2 + std::chrono::duration <double, std::milli> (dSSI2).count();
+
+
+				//Selection Sort Iterativo (piorCaso)
+				
+				//Preenchendo o Array A ordenado
+				for(i = 0; i < size; i++){
+					A[i] = rand()%size;
+				}
+				auto sSSI3 = std::chrono::steady_clock::now();
+				//========================================================================================
+				r1 += selectionSort(A, size);
+				//========================================================================================
+				auto eSSI3 = std::chrono::steady_clock::now();
+				auto dSSI3 = eSSI3 - sSSI3;
+				mSSI3 = mSSI3 + std::chrono::duration <double, std::milli> (dSSI3).count();
+
+			}
+
+			//Médias
+			mSSI1 = mSSI1/100;
+			mSSI2 = mSSI2/100;
+			mSSI3 = mSSI3/100;
+			r1   /= 100;
+			r2   /= 100;
+			r3   /= 100;
+			if(r1 > max) max = r1;
+			if(r2 > max) max = r2;
+			if(r3 > max) max = r3; 
+
+			std::cout.precision(4);
+			std::cout << size << " " << mSSI1 << " " << mSSI2 << " " << mSSI3 << " " << r1 << " " << r2 << " " << r3 << std::endl;
+			saida << size << " " << r1 << " " << r2 << " " << r3 << endl;
+			r1 = 0;
+			r2 = 0;
+			r3 = 0;
+
+			//Aumentando a amostra em Progressão Aritimética
+			size = size + 100;
+
+		}
+		//Gerar o arquivo relatorio.gnuplot
+		gerarGnuSet("SSI", "Selection Sort Iterativa", inicial, maximo, max);
 		break;
 
 		default:

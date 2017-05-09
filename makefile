@@ -14,7 +14,6 @@ INC_DIR = ./include
 SRC_DIR = ./src
 OBJ_DIR = ./build
 BIN_DIR = ./bin
-DOC_DIR = ./doc
 
 # Outras variaveis
 

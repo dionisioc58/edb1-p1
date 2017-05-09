@@ -4,8 +4,8 @@ set terminal png size 1280,960 enhanced font 'Helvetica,12'
 set output './images/BBR.png'
 set title 'Busca Binária Recursiva'
 set grid
-set xrange[1000000:1100000]
-set xtics 10000
+set xrange[10000:1100000]
+set xtics 54500
 set xlabel 'Tamanho do vetor'
 set ylabel 'Número de passos'
 set xtic rotate by -90 scale 0
