@@ -98,7 +98,8 @@ long int binary_search_recursive(long int A[], long int first, long int end, lon
 }
 
 int selectionSort(long int *V, long int N) {
-	int menor, troca, contagem = 1;
+	long int menor, troca;
+	int contagem = 1;
 	for(int i = 0; i < (N - 1); i++) {
 		contagem++;
 		menor = i;
@@ -129,10 +130,10 @@ int insertionSort(long int *V, long int N) {
 	for (int ii = 0; ii < N; ii++){
 	// seleciona elemento dentre os não ordenados
 		contagem++;
-		int elemento = V[ii];
+		long int elemento = V[ii];
 		contagem++;
 		// insere elemento na lista dos ordenados
-		int pInsercao = ii;
+		long int pInsercao = ii;
 		contagem++;
 		while(pInsercao > 0 && V[pInsercao - 1] > elemento){
 			contagem++;
@@ -148,27 +149,41 @@ int insertionSort(long int *V, long int N) {
 	return contagem;
 }
 
-void quickSort(long int arr[], int left, int right) {
-    int i = left, j = right;
+int quickSort(long int arr[], int left, int right) {
+    int i = left, j = right, contagem = 1;
     int tmp;
+	contagem++;
     int pivot = arr[(left + right) / 2];
+	contagem++;
     while (i <= j) {
-        while (arr[i] < pivot)
+		contagem++;
+        while (arr[i] < pivot) {
             i++;
-        while (arr[j] > pivot)
+			contagem++;
+		}
+        while (arr[j] > pivot) {
             j--;
+			contagem++;
+		}
         if (i <= j) {
+			contagem++;
           	tmp = arr[i];
+			contagem++;
             arr[i] = arr[j];
+			contagem++;
             arr[j] = tmp;
+			contagem++;
             i++;
+			contagem++;
             j--;
+			contagem++;
         }
-    };
+    }
   	if (left < j)
-        quickSort(arr, left, j);
+        contagem += quickSort(arr, left, j);
     if (i < right)
-        quickSort(arr, i, right);
+        contagem += quickSort(arr, i, right);
+	return contagem;
 }
 
 bool gerarGnuSet(string nome, string titulo, int min_x, int max_x, int max_y) {
@@ -214,7 +229,7 @@ int main(){
 	long int max = 0;//Para o máximo de y no gnuplot
 	ofstream saida;
 	double mBSI1 = 0, mBSI2 = 0, mBSI3 = 0, mBSR1 = 0, mBSR2 = 0, mBSR3 = 0, mBBI1 = 0, mBBI2 = 0, mBBI3 = 0, mBBR1 = 0, mBBR2 = 0, mBBR3 = 0;
-	double mSSI1 = 0, mSSI2 = 0, mSSI3 = 0, mISI1 = 0, mISI2 = 0, mISI3 = 0;
+	double mSSI1 = 0, mSSI2 = 0, mSSI3 = 0, mISI1 = 0, mISI2 = 0, mISI3 = 0, mQSR1 = 0, mQSR2 = 0, mQSR3 = 0;
 	
 	srand((unsigned)time(0));
 
@@ -225,6 +240,7 @@ int main(){
 	std::cout << "(4) Busca binária recursiva." << std::endl;
 	std::cout << "(5) Selection Sort Iterativa." << std::endl;
 	std::cout << "(6) Insertion Sort Iterativa." << std::endl;
+	std::cout << "(7) Quick Sort Recursivo." << std::endl;
 
 	std::cin >> opcao;
 
@@ -752,11 +768,104 @@ int main(){
 		gerarGnuSet("ISI", "Insertion Sort Iterativa", inicial, maximo, max);
 		break;
 
+		case 7:
+		
+		std::cout << "# Arquivo Gnuplot para quickSort recursivo" << std::endl;
+		std::cout << "# N Melhor Caso Caso Médio Pior Caso" << std::endl;
+		saida.open("./data/QSR.dat");
+
+		//Inicializando tamanhos
+		inicial =   10000; 
+		size    = inicial;
+		maximo  =  100000;
+		passo   =   10000;
+
+		while(size <= maximo){
+			delete[] A;
+			A = new long int[size];
+
+			//Verificando a média (100 repetições)
+			for(i = 0; i < 100; i++){
+
+				//Selection Sort Iterativo (melhorCaso)
+				
+				//Preenchendo o Array A ordenado
+				for(i = 0; i < size; i++){
+					A[i] = i;
+				}
+				auto sQSR1 = std::chrono::steady_clock::now();
+				//========================================================================================
+				r1 += quickSort(A, 0, size);
+				//========================================================================================
+				auto eQSR1 = std::chrono::steady_clock::now();
+				auto dQSR1 = eQSR1 - sQSR1;
+				mQSR1 = mQSR1 + std::chrono::duration <double, std::milli> (dQSR1).count();
+
+				//Selection Sort Iterativo (médioCaso)
+				
+				//Preenchendo o Array A pela metade
+				for(i = 0; i < size; i++){
+					if(i < (size / 2))
+						A[i] = i;
+					else
+						A[i] = rand()%size;
+				}
+				auto sQSR2 = std::chrono::steady_clock::now();
+				//========================================================================================
+				r2 += quickSort(A, 0, size);
+				//========================================================================================
+				auto eQSR2 = std::chrono::steady_clock::now();
+				auto dQSR2 = eQSR2 - sQSR2;
+				mQSR2 = mQSR2 + std::chrono::duration <double, std::milli> (dQSR2).count();
+
+
+				//Selection Sort Iterativo (piorCaso)
+				
+				//Preenchendo o Array A desordenado
+				for(i = 0; i < size; i++){
+					A[i] = rand()%size;
+				}
+				auto sQSR3 = std::chrono::steady_clock::now();
+				//========================================================================================
+				r3 += quickSort(A, 0, size);
+				//========================================================================================
+				auto eQSR3 = std::chrono::steady_clock::now();
+				auto dQSR3 = eQSR3 - sQSR3;
+				mQSR3 = mQSR3 + std::chrono::duration <double, std::milli> (dQSR3).count();
+
+			}
+
+			//Médias
+			mQSR1 = mQSR1/100;
+			mQSR2 = mQSR2/100;
+			mQSR3 = mQSR3/100;
+			r1   /= 100;
+			r2   /= 100;
+			r3   /= 100;
+			if(r1 > max) max = r1;
+			if(r2 > max) max = r2;
+			if(r3 > max) max = r3; 
+
+			std::cout.precision(4);
+			std::cout << size << " " << mQSR1 << " " << mQSR2 << " " << mQSR3 << " " << r1 << " " << r2 << " " << r3 << std::endl;
+			saida << size << " " << r1 << " " << r2 << " " << r3 << endl;
+			r1 = 0;
+			r2 = 0;
+			r3 = 0;
+
+			//Aumentando a amostra em Progressão Aritimética
+			size = size + passo;
+
+		}
+		//Gerar o arquivo relatorio.gnuplot
+		gerarGnuSet("QSR", "Quick Sort Recursivo", inicial, maximo, max);
+		break;
+
 		default:
 			std::cout << "Entrada inválida" << std::endl;
 	}
 	
-	if((opcao > 0) && (opcao < 6)) {
+	if((opcao > 0) && (opcao < 7)) {
 		delete[] A;
 		saida.close();
 	}
