@@ -186,6 +186,50 @@ int quickSort(long int arr[], int left, int right) {
 	return contagem;
 }
 
+int merge(long int *V, int ini1, int ini2, int fim2){
+	int fim1 = ini2 - 1, contagem = 1;
+	long int *tmp;
+	contagem++;
+	int ntmp = 0;
+	contagem++;
+	while(ini1 <= fim1 && ini2 <= fim2){
+		contagem++;
+		if(V[ini1] < V[ini2]) {
+			tmp[ntmp++] = V[ini1++];
+			contagem++;
+		} else { 
+			tmp[ntmp++] = V[ini2++];
+			contagem++;
+		}
+	}
+	while(ini1 <= fim1) {
+		tmp[ntmp++] = V[ini1++];
+		contagem++;
+	}
+	while(ini2<=fim2) {
+		tmp[ntmp++] = V[ini2++];
+		contagem++;
+	}
+	for(int i = 0; i < ntmp; i++) {
+		V[ini1 + i] = tmp[i];
+		contagem++;
+	}
+	return contagem;
+}
+
+int mergeSort(long int *V, int inicio, int fim) {
+	int contagem = 1;
+	if(inicio < fim) {
+		contagem++;
+		int meio = inicio + (fim - inicio) / 2;
+		contagem++;
+		contagem += mergeSort(V, inicio, meio);
+		contagem += mergeSort(V, meio + 1, fim);
+		contagem += merge(V, inicio, meio + 1, fim);
+	}
+	return contagem;
+}
+
 bool gerarGnuSet(string nome, string titulo, int min_x, int max_x, int max_y) {
 	ofstream saida("./gnuplot/" + nome + ".gnuplot");
 	if(!saida) return false;
@@ -229,7 +273,7 @@ int main(){
 	long int max = 0;//Para o máximo de y no gnuplot
 	ofstream saida;
 	double mBSI1 = 0, mBSI2 = 0, mBSI3 = 0, mBSR1 = 0, mBSR2 = 0, mBSR3 = 0, mBBI1 = 0, mBBI2 = 0, mBBI3 = 0, mBBR1 = 0, mBBR2 = 0, mBBR3 = 0;
-	double mSSI1 = 0, mSSI2 = 0, mSSI3 = 0, mISI1 = 0, mISI2 = 0, mISI3 = 0, mQSR1 = 0, mQSR2 = 0, mQSR3 = 0;
+	double mSSI1 = 0, mSSI2 = 0, mSSI3 = 0, mISI1 = 0, mISI2 = 0, mISI3 = 0, mQSR1 = 0, mQSR2 = 0, mQSR3 = 0, mMSR1 = 0, mMSR2 = 0, mMSR3 = 0;
 	
 	srand((unsigned)time(0));
 
@@ -241,6 +285,7 @@ int main(){
 	std::cout << "(5) Selection Sort Iterativa." << std::endl;
 	std::cout << "(6) Insertion Sort Iterativa." << std::endl;
 	std::cout << "(7) Quick Sort Recursivo." << std::endl;
+	std::cout << "(8) Merge Sort Recursivo." << std::endl;
 
 	std::cin >> opcao;
 
@@ -694,7 +739,7 @@ int main(){
 			//Verificando a média (100 repetições)
 			for(i = 0; i < 100; i++){
 
-				//Selection Sort Iterativo (melhorCaso)
+				//Insertion Sort Iterativo (melhorCaso)
 				
 				//Preenchendo o Array A ordenado
 				for(i = 0; i < size; i++){
@@ -708,9 +753,9 @@ int main(){
 				auto dISI1 = eISI1 - sISI1;
 				mISI1 = mISI1 + std::chrono::duration <double, std::milli> (dISI1).count();
 
-				//Selection Sort Iterativo (médioCaso)
+				//Insertion Sort Iterativo (médioCaso)
 				
-				//Preenchendo o Array A pela metade
+				//Preenchendo o Array A ordenado pela metade
 				for(i = 0; i < size; i++){
 					if(i < (size / 2))
 						A[i] = i;
@@ -726,7 +771,7 @@ int main(){
 				mISI2 = mISI2 + std::chrono::duration <double, std::milli> (dISI2).count();
 
 
-				//Selection Sort Iterativo (piorCaso)
+				//Insertion Sort Iterativo (piorCaso)
 				
 				//Preenchendo o Array A desordenado
 				for(i = 0; i < size; i++){
@@ -787,7 +832,7 @@ int main(){
 			//Verificando a média (100 repetições)
 			for(i = 0; i < 100; i++){
 
-				//Selection Sort Iterativo (melhorCaso)
+				//Quick Sort Iterativo (melhorCaso)
 				
 				//Preenchendo o Array A ordenado
 				for(i = 0; i < size; i++){
@@ -801,9 +846,9 @@ int main(){
 				auto dQSR1 = eQSR1 - sQSR1;
 				mQSR1 = mQSR1 + std::chrono::duration <double, std::milli> (dQSR1).count();
 
-				//Selection Sort Iterativo (médioCaso)
+				//Quick Sort Iterativo (médioCaso)
 				
-				//Preenchendo o Array A pela metade
+				//Preenchendo o Array A ordenado pela metade
 				for(i = 0; i < size; i++){
 					if(i < (size / 2))
 						A[i] = i;
@@ -819,7 +864,7 @@ int main(){
 				mQSR2 = mQSR2 + std::chrono::duration <double, std::milli> (dQSR2).count();
 
 
-				//Selection Sort Iterativo (piorCaso)
+				//Quick Sort Iterativo (piorCaso)
 				
 				//Preenchendo o Array A desordenado
 				for(i = 0; i < size; i++){
@@ -861,11 +906,103 @@ int main(){
 		gerarGnuSet("QSR", "Quick Sort Recursivo", inicial, maximo, max);
 		break;
 
+		case 8:
+		
+		std::cout << "# Arquivo Gnuplot para mergeSort recursivo" << std::endl;
+		std::cout << "# N Melhor Caso Caso Médio Pior Caso" << std::endl;
+		saida.open("./data/MSR.dat");
+
+		//Inicializando tamanhos
+		inicial =   1; 
+		size    = inicial;
+		maximo  =   2;
+		passo   =   1;
+
+		while(size <= maximo){
+			delete[] A;
+			A = new long int[size];
+
+			//Verificando a média (100 repetições)
+			for(int j = 0; j < 100; j++){
+				//Merge Sort Iterativo (melhorCaso)
+				
+				//Preenchendo o Array A ordenado
+				for(i = 0; i < size; i++){
+					A[i] = i;
+				}
+				auto sMSR1 = std::chrono::steady_clock::now();
+				//========================================================================================
+				r1 += mergeSort(A, 0, size);
+				//========================================================================================
+				auto eMSR1 = std::chrono::steady_clock::now();
+				auto dMSR1 = eMSR1 - sMSR1;
+				mMSR1 = mMSR1 + std::chrono::duration <double, std::milli> (dMSR1).count();
+
+				//Merge Sort Iterativo (médioCaso)
+				
+				//Preenchendo o Array A ordenado pela metade
+				for(i = 0; i < size; i++){
+					if(i < (size / 2))
+						A[i] = i;
+					else
+						A[i] = rand()%size;
+				}
+				auto sMSR2 = std::chrono::steady_clock::now();
+				//========================================================================================
+				r2 += mergeSort(A, 0, size);
+				//========================================================================================
+				auto eMSR2 = std::chrono::steady_clock::now();
+				auto dMSR2 = eMSR2 - sMSR2;
+				mMSR2 = mMSR2 + std::chrono::duration <double, std::milli> (dMSR2).count();
+
+
+				//Merge Sort Iterativo (piorCaso)
+				
+				//Preenchendo o Array A desordenado
+				for(i = 0; i < size; i++){
+					A[i] = rand()%size;
+				}
+				auto sMSR3 = std::chrono::steady_clock::now();
+				//========================================================================================
+				r3 += mergeSort(A, 0, size);
+				//========================================================================================
+				auto eMSR3 = std::chrono::steady_clock::now();
+				auto dMSR3 = eMSR3 - sMSR3;
+				mMSR3 = mMSR3 + std::chrono::duration <double, std::milli> (dMSR3).count();
+
+			}
+
+			//Médias
+			mMSR1 = mMSR1/100;
+			mMSR2 = mMSR2/100;
+			mMSR3 = mMSR3/100;
+			r1   /= 100;
+			r2   /= 100;
+			r3   /= 100;
+			if(r1 > max) max = r1;
+			if(r2 > max) max = r2;
+			if(r3 > max) max = r3; 
+
+			std::cout.precision(4);
+			std::cout << size << " " << mMSR1 << " " << mMSR2 << " " << mMSR3 << " " << r1 << " " << r2 << " " << r3 << std::endl;
+			saida << size << " " << r1 << " " << r2 << " " << r3 << endl;
+			r1 = 0;
+			r2 = 0;
+			r3 = 0;
+
+			//Aumentando a amostra em Progressão Aritimética
+			size = size + passo;
+
+		}
+		//Gerar o arquivo relatorio.gnuplot
+		gerarGnuSet("MSR", "Merge Sort Recursivo", inicial, maximo, max);
+		break;
+
 		default:
 			std::cout << "Entrada inválida" << std::endl;
 	}
 	
-	if((opcao > 0) && (opcao < 7)) {
+	if((opcao > 0) && (opcao < 9)) {
 		delete[] A;
 		saida.close();
 	}
