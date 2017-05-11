@@ -25,9 +25,9 @@ CFLAGS = -Wall -pedantic -ansi -std=c++11 -I. -I$(INC_DIR)
 
 # Define o alvo (target) para a compilacao completa.
 # Ao final da compilacao, remove os arquivos objeto.
-all: lab01
+all: clean lab01
 debug: CFLAGS += -g -O0
-debug: lab01
+debug: clean lab01
 
 # Alvo (target) para a construcao do executavel lab01
 # Define os arquivos lab01.o como dependencias

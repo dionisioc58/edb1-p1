@@ -186,47 +186,89 @@ int quickSort(long int arr[], int left, int right) {
 	return contagem;
 }
 
-int merge(long int *V, int ini1, int ini2, int fim2){
-	int fim1 = ini2 - 1, contagem = 1;
-	long int *tmp;
+int merge(long int arr[], int l, int m, int r){
+    int i, j, k, contagem = 1;
+    int n1 = m - l + 1;
 	contagem++;
-	int ntmp = 0;
+    int n2 =  r - m;
 	contagem++;
-	while(ini1 <= fim1 && ini2 <= fim2){
+ 
+    /* create temp arrays */
+    int L[n1], R[n2];
+	contagem++;
+ 
+    /* Copy data to temp arrays L[] and R[] */
+    for (i = 0; i < n1; i++) {
+        L[i] = arr[l + i];
 		contagem++;
-		if(V[ini1] < V[ini2]) {
-			tmp[ntmp++] = V[ini1++];
+	}
+    for (j = 0; j < n2; j++) {
+        R[j] = arr[m + 1+ j];
+		contagem++;
+	}
+ 
+    /* Merge the temp arrays back into arr[l..r]*/
+    i = 0; // Initial index of first subarray
+	contagem++;
+    j = 0; // Initial index of second subarray
+	contagem++;
+    k = l; // Initial index of merged subarray
+	contagem++;
+    while (i < n1 && j < n2) {
+		contagem++;
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
 			contagem++;
-		} else { 
-			tmp[ntmp++] = V[ini2++];
+            i++;
 			contagem++;
-		}
-	}
-	while(ini1 <= fim1) {
-		tmp[ntmp++] = V[ini1++];
+        } else {
+            arr[k] = R[j];
+			contagem++;
+            j++;
+			contagem++;
+        }
+        k++;
 		contagem++;
-	}
-	while(ini2<=fim2) {
-		tmp[ntmp++] = V[ini2++];
+    }
+ 
+    /* Copy the remaining elements of L[], if there
+       are any */
+    while (i < n1) {
 		contagem++;
-	}
-	for(int i = 0; i < ntmp; i++) {
-		V[ini1 + i] = tmp[i];
+        arr[k] = L[i];
 		contagem++;
-	}
+        i++;
+		contagem++;
+        k++;
+		contagem++;
+    }
+ 
+    /* Copy the remaining elements of R[], if there
+       are any */
+    while (j < n2) {
+		contagem++;
+        arr[k] = R[j];
+		contagem++;
+        j++;
+		contagem++;
+        k++;
+		contagem++;
+    }
 	return contagem;
 }
 
-int mergeSort(long int *V, int inicio, int fim) {
+int mergeSort(long int arr[], int l, int r) {
 	int contagem = 1;
-	if(inicio < fim) {
+    if (l < r) {
+        contagem++;
+        int m = l+(r-l)/2;
 		contagem++;
-		int meio = inicio + (fim - inicio) / 2;
-		contagem++;
-		contagem += mergeSort(V, inicio, meio);
-		contagem += mergeSort(V, meio + 1, fim);
-		contagem += merge(V, inicio, meio + 1, fim);
-	}
+ 
+        contagem += mergeSort(arr, l, m);
+        contagem += mergeSort(arr, m+1, r);
+ 
+        contagem += merge(arr, l, m, r);
+    }
 	return contagem;
 }
 
@@ -913,10 +955,10 @@ int main(){
 		saida.open("./data/MSR.dat");
 
 		//Inicializando tamanhos
-		inicial =   1; 
+		inicial =  10000; 
 		size    = inicial;
-		maximo  =   2;
-		passo   =   1;
+		maximo  = 100000;
+		passo   =  10000;
 
 		while(size <= maximo){
 			delete[] A;
