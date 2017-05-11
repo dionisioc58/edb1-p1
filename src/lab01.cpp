@@ -98,20 +98,30 @@ long int binary_search_recursive(long int A[], long int first, long int end, lon
 }
 
 int selectionSort(long int *V, long int N) {
-	int menor, troca;
+	int menor, troca, contagem = 1;
 	for(int i = 0; i < (N - 1); i++) {
+		contagem++;
 		menor = i;
+		contagem++;
 		for(int j = (i + 1); j < N; j++) {
-			if(V[j] < V[menor])
+			contagem++;
+			if(V[j] < V[menor]) {
 				menor = j;
+				contagem++;
+			}
 		}
+		contagem++;
 		if(i != menor) {
+			contagem++;
 			troca = V[i];
+			contagem++;
 			V[i] = V[menor];
+			contagem++;
 			V[menor] = troca;
+			contagem++;
 		}
 	}
-	return 0;
+	return contagem;
 }
 
 void quickSort(long int arr[], int left, int right) {
@@ -203,7 +213,7 @@ int main(){
 		saida.open("./data/BSI.dat");
 
 		//Inicializando tamanhos
-		inicial = 10000; 
+		inicial =  10000; 
 		size    = inicial;
 		maximo  = 200000;
 		passo   =  3000;
@@ -538,10 +548,10 @@ int main(){
 		saida.open("./data/SSI.dat");
 
 		//Inicializando tamanhos
-		inicial =   10000; 
+		inicial =   1000; 
 		size    = inicial;
-		maximo  =  100000;
-		passo   =   10000;
+		maximo  =   10000;
+		passo   =    1000;
 
 		while(size <= maximo){
 			delete[] A;
@@ -566,7 +576,7 @@ int main(){
 
 				//Selection Sort Iterativo (médioCaso)
 				
-				//Preenchendo o Array A ordenado
+				//Preenchendo o Array A pela metade
 				for(i = 0; i < size; i++){
 					if(i < (size / 2))
 						A[i] = i;
@@ -575,7 +585,7 @@ int main(){
 				}
 				auto sSSI2 = std::chrono::steady_clock::now();
 				//========================================================================================
-				r1 += selectionSort(A, size);
+				r2 += selectionSort(A, size);
 				//========================================================================================
 				auto eSSI2 = std::chrono::steady_clock::now();
 				auto dSSI2 = eSSI2 - sSSI2;
@@ -584,13 +594,13 @@ int main(){
 
 				//Selection Sort Iterativo (piorCaso)
 				
-				//Preenchendo o Array A ordenado
+				//Preenchendo o Array A desordenado
 				for(i = 0; i < size; i++){
 					A[i] = rand()%size;
 				}
 				auto sSSI3 = std::chrono::steady_clock::now();
 				//========================================================================================
-				r1 += selectionSort(A, size);
+				r3 += selectionSort(A, size);
 				//========================================================================================
 				auto eSSI3 = std::chrono::steady_clock::now();
 				auto dSSI3 = eSSI3 - sSSI3;
@@ -617,7 +627,7 @@ int main(){
 			r3 = 0;
 
 			//Aumentando a amostra em Progressão Aritimética
-			size = size + 100;
+			size = size + passo;
 
 		}
 		//Gerar o arquivo relatorio.gnuplot
