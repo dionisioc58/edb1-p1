@@ -124,6 +124,30 @@ int selectionSort(long int *V, long int N) {
 	return contagem;
 }
 
+int insertionSort(long int *V, long int N) {
+	int contagem = 1;
+	for (int ii = 0; ii < N; ii++){
+	// seleciona elemento dentre os não ordenados
+		contagem++;
+		int elemento = V[ii];
+		contagem++;
+		// insere elemento na lista dos ordenados
+		int pInsercao = ii;
+		contagem++;
+		while(pInsercao > 0 && V[pInsercao - 1] > elemento){
+			contagem++;
+			V[pInsercao] = V[pInsercao - 1];
+			contagem++;
+			pInsercao--;
+			contagem++;
+		}
+		V[pInsercao] = elemento;
+		contagem++;
+	}
+	
+	return contagem;
+}
+
 void quickSort(long int arr[], int left, int right) {
     int i = left, j = right;
     int tmp;
@@ -190,7 +214,7 @@ int main(){
 	long int max = 0;//Para o máximo de y no gnuplot
 	ofstream saida;
 	double mBSI1 = 0, mBSI2 = 0, mBSI3 = 0, mBSR1 = 0, mBSR2 = 0, mBSR3 = 0, mBBI1 = 0, mBBI2 = 0, mBBI3 = 0, mBBR1 = 0, mBBR2 = 0, mBBR3 = 0;
-	double mSSI1 = 0, mSSI2 = 0, mSSI3 = 0;
+	double mSSI1 = 0, mSSI2 = 0, mSSI3 = 0, mISI1 = 0, mISI2 = 0, mISI3 = 0;
 	
 	srand((unsigned)time(0));
 
@@ -200,6 +224,7 @@ int main(){
 	std::cout << "(3) Busca binária iterativa." << std::endl;
 	std::cout << "(4) Busca binária recursiva." << std::endl;
 	std::cout << "(5) Selection Sort Iterativa." << std::endl;
+	std::cout << "(6) Insertion Sort Iterativa." << std::endl;
 
 	std::cin >> opcao;
 
@@ -634,11 +659,104 @@ int main(){
 		gerarGnuSet("SSI", "Selection Sort Iterativa", inicial, maximo, max);
 		break;
 
+		case 6:
+		
+		std::cout << "# Arquivo Gnuplot para insertionSort iterativo" << std::endl;
+		std::cout << "# N Melhor Caso Caso Médio Pior Caso" << std::endl;
+		saida.open("./data/ISI.dat");
+
+		//Inicializando tamanhos
+		inicial =   1000; 
+		size    = inicial;
+		maximo  =   10000;
+		passo   =    1000;
+
+		while(size <= maximo){
+			delete[] A;
+			A = new long int[size];
+
+			//Verificando a média (100 repetições)
+			for(i = 0; i < 100; i++){
+
+				//Selection Sort Iterativo (melhorCaso)
+				
+				//Preenchendo o Array A ordenado
+				for(i = 0; i < size; i++){
+					A[i] = i;
+				}
+				auto sISI1 = std::chrono::steady_clock::now();
+				//========================================================================================
+				r1 += insertionSort(A, size);
+				//========================================================================================
+				auto eISI1 = std::chrono::steady_clock::now();
+				auto dISI1 = eISI1 - sISI1;
+				mISI1 = mISI1 + std::chrono::duration <double, std::milli> (dISI1).count();
+
+				//Selection Sort Iterativo (médioCaso)
+				
+				//Preenchendo o Array A pela metade
+				for(i = 0; i < size; i++){
+					if(i < (size / 2))
+						A[i] = i;
+					else
+						A[i] = rand()%size;
+				}
+				auto sISI2 = std::chrono::steady_clock::now();
+				//========================================================================================
+				r2 += insertionSort(A, size);
+				//========================================================================================
+				auto eISI2 = std::chrono::steady_clock::now();
+				auto dISI2 = eISI2 - sISI2;
+				mISI2 = mISI2 + std::chrono::duration <double, std::milli> (dISI2).count();
+
+
+				//Selection Sort Iterativo (piorCaso)
+				
+				//Preenchendo o Array A desordenado
+				for(i = 0; i < size; i++){
+					A[i] = rand()%size;
+				}
+				auto sISI3 = std::chrono::steady_clock::now();
+				//========================================================================================
+				r3 += insertionSort(A, size);
+				//========================================================================================
+				auto eISI3 = std::chrono::steady_clock::now();
+				auto dISI3 = eISI3 - sISI3;
+				mISI3 = mISI3 + std::chrono::duration <double, std::milli> (dISI3).count();
+
+			}
+
+			//Médias
+			mISI1 = mISI1/100;
+			mISI2 = mISI2/100;
+			mISI3 = mISI3/100;
+			r1   /= 100;
+			r2   /= 100;
+			r3   /= 100;
+			if(r1 > max) max = r1;
+			if(r2 > max) max = r2;
+			if(r3 > max) max = r3; 
+
+			std::cout.precision(4);
+			std::cout << size << " " << mISI1 << " " << mISI2 << " " << mISI3 << " " << r1 << " " << r2 << " " << r3 << std::endl;
+			saida << size << " " << r1 << " " << r2 << " " << r3 << endl;
+			r1 = 0;
+			r2 = 0;
+			r3 = 0;
+
+			//Aumentando a amostra em Progressão Aritimética
+			size = size + passo;
+
+		}
+		//Gerar o arquivo relatorio.gnuplot
+		gerarGnuSet("ISI", "Insertion Sort Iterativa", inicial, maximo, max);
+		break;
+
 		default:
 			std::cout << "Entrada inválida" << std::endl;
 	}
 	
-	if((opcao > 0) && (opcao < 5)) {
+	if((opcao > 0) && (opcao < 6)) {
 		delete[] A;
 		saida.close();
 	}

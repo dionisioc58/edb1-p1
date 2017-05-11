@@ -9,5 +9,5 @@ set xtics 450
 set xlabel 'Tamanho do vetor'
 set ylabel 'Número de passos'
 set xtic rotate by -90 scale 0
-set yrange[0:501426]
+set yrange[0:501405]
 plot './data/SSI.dat' using 1:2 title 'Melhor Caso' lw 2 with lines, './data/SSI.dat' using 1:3 title 'Médio Caso' lw 2 with lines, './data/SSI.dat' using 1:4 title 'Pior Caso' lw 2 with lines
