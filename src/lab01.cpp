@@ -5,7 +5,8 @@
 #include <cstdlib>
 #include <ctime>
 
-#include "vetores.h"
+#include "search_sort.h"
+#include "funcoes.h"
 
 using namespace std;
 
@@ -47,6 +48,42 @@ bool gerarGnuSet(string nome, string titulo, int min_x, int max_x, int max_y) {
 	return true;
 }
 
+bool gerarGnuSet2(string nome, string titulo, int min_x, int max_x, int max_y) {
+	ofstream saida("./gnuplot/" + nome + ".gnuplot");
+	if(!saida) return false;
+
+	saida << "reset" << endl;
+	saida << "set key on" << endl;
+	saida << "set terminal png size 1280,960 enhanced font 'Helvetica,12'" << endl;
+	saida << "set output './images/" + nome + ".png'" << endl;
+	saida << "set title '" + titulo + "'" << endl;
+	saida << "set grid" << endl;
+	saida << "set xrange[";
+	saida << min_x;
+	saida << ":";
+	saida << max_x;
+	saida << "]" << endl;
+	saida << "set xtics ";
+	saida << (int)((max_x-min_x)/20);
+	saida << endl;
+	saida << "set xlabel 'Tamanho do vetor'" << endl;
+	saida << "set ylabel 'Número de passos'" << endl;
+	saida << "set xtic rotate by -90 scale 0" << endl;
+	saida << "set yrange[0:";
+	saida << (max_y+10);
+	saida << "]" << endl;
+	saida << "plot './data/" + nome + ".dat' using 1:2 title 'Inserir no Início' lw 2 with lines, ";
+	saida <<      "'./data/" + nome + ".dat' using 1:3 title 'Inserir no Fim' lw 2 with lines, ";
+	saida <<      "'./data/" + nome + ".dat' using 1:4 title 'Inserir Aleatório' lw 2 with lines" << endl;
+	saida.close();
+
+	//Executar o gnuplot e gerar o arquivo de imagem
+	string comando = "gnuplot -e '' ./gnuplot/" + nome + ".gnuplot";
+	system(comando.c_str());
+
+	return true;
+}
+
 int main(){
 
 	//Variáveis
@@ -55,6 +92,7 @@ int main(){
 	ofstream saida;
 	double mBSI1 = 0, mBSI2 = 0, mBSI3 = 0, mBSR1 = 0, mBSR2 = 0, mBSR3 = 0, mBBI1 = 0, mBBI2 = 0, mBBI3 = 0, mBBR1 = 0, mBBR2 = 0, mBBR3 = 0;
 	double mSSI1 = 0, mSSI2 = 0, mSSI3 = 0, mISI1 = 0, mISI2 = 0, mISI3 = 0, mQSR1 = 0, mQSR2 = 0, mQSR3 = 0, mMSR1 = 0, mMSR2 = 0, mMSR3 = 0;
+	double mIIV  = 0, mIFV  = 0, mIPV  = 0, mIIL  = 0, mIFL  = 0, mIPL  = 0;
 	
 	srand((unsigned)time(0));
 
@@ -67,10 +105,13 @@ int main(){
 	std::cout << "(6) Insertion Sort Iterativa." << std::endl;
 	std::cout << "(7) Quick Sort Recursivo." << std::endl;
 	std::cout << "(8) Merge Sort Recursivo." << std::endl;
+	std::cout << "(9) Inserir no VETOR (início/fim/aleatório)" << std::endl;
+	std::cout << "(10) Inserir na LISTA LIGADA (início/fim/aleatório)" << std::endl;
 
 	std::cin >> opcao;
 
 	long int *A = new long int[1];
+	Lista<long> *B = new Lista<long>();
 
 	switch(opcao) {
 		case 1:
@@ -148,7 +189,7 @@ int main(){
 			r1 = 0;
 			r2 = 0;
 			r3 = 0;
-			//Aumentando a amostra em Progressão Aritimética
+			//Aumentando a amostra em Progressão Aritmética
 			size = size + passo;
 
 		}
@@ -231,7 +272,7 @@ int main(){
 			r2 = 0;
 			r3 = 0;
 
-			//Aumentando a amostra em Progressão Aritimética
+			//Aumentando a amostra em Progressão Aritmética
 			size = size + passo;
 
 		}
@@ -315,7 +356,7 @@ int main(){
 			r2 = 0;
 			r3 = 0;
 
-			//Aumentando a amostra em Progressão Aritimética
+			//Aumentando a amostra em Progressão Aritmética
 			size = size + passo;
 
 		}
@@ -400,7 +441,7 @@ int main(){
 			r2 = 0;
 			r3 = 0;
 
-			//Aumentando a amostra em Progressão Aritimética
+			//Aumentando a amostra em Progressão Aritmética
 			size = size + passo;
 
 		}
@@ -493,7 +534,7 @@ int main(){
 			r2 = 0;
 			r3 = 0;
 
-			//Aumentando a amostra em Progressão Aritimética
+			//Aumentando a amostra em Progressão Aritmética
 			size = size + passo;
 
 		}
@@ -586,7 +627,7 @@ int main(){
 			r2 = 0;
 			r3 = 0;
 
-			//Aumentando a amostra em Progressão Aritimética
+			//Aumentando a amostra em Progressão Aritmética
 			size = size + passo;
 
 		}
@@ -679,7 +720,7 @@ int main(){
 			r2 = 0;
 			r3 = 0;
 
-			//Aumentando a amostra em Progressão Aritimética
+			//Aumentando a amostra em Progressão Aritmética
 			size = size + passo;
 
 		}
@@ -771,13 +812,152 @@ int main(){
 			r2 = 0;
 			r3 = 0;
 
-			//Aumentando a amostra em Progressão Aritimética
+			//Aumentando a amostra em Progressão Aritmética
 			size = size + passo;
 
 		}
 		//Gerar o arquivo relatorio.gnuplot
 		gerarGnuSet("MSR", "Merge Sort Recursivo", inicial, maximo, max);
 		break;
+
+		case 9:
+			std::cout << "# Arquivo Gnuplot para inserir no vetor" << std::endl;
+			std::cout << "# N Passos" << std::endl;
+			saida.open("./data/IV.dat");
+
+			//Inicializando tamanhos
+			inicial =  10000; 
+			size    = inicial;
+			maximo  = 100000;
+			passo   =  10000;
+
+			while(size <= maximo){
+				delete[] A;
+				A = new long int[size];
+
+				//Verificando a média (100 repetições)
+				for(int j = 0; j < 100; j++){
+					long int el = rand()%1000;
+					
+					auto sIIV = std::chrono::steady_clock::now();
+					//========================================================================================
+					r1 += InserirInicioV(A, size, el);
+					//========================================================================================
+					auto eIIV = std::chrono::steady_clock::now();
+					auto dIIV = eIIV - sIIV;
+					mIIV = mIIV + std::chrono::duration <double, std::milli> (dIIV).count();
+
+					auto sIFV = std::chrono::steady_clock::now();
+					//========================================================================================
+					r2 += InserirFimV(A, size, j, el);
+					//========================================================================================
+					auto eIFV = std::chrono::steady_clock::now();
+					auto dIFV = eIFV - sIFV;
+					mIFV = mIFV + std::chrono::duration <double, std::milli> (dIFV).count();
+
+					auto sIPV = std::chrono::steady_clock::now();
+					//========================================================================================
+					r3 += InserirPosV(A, size, rand()%size, el);
+					//========================================================================================
+					auto eIPV = std::chrono::steady_clock::now();
+					auto dIPV = eIPV - sIPV;
+					mIPV = mIPV + std::chrono::duration <double, std::milli> (dIPV).count();
+				}
+
+				//Médias
+				mIIV = mIIV/100;
+				mIFV = mIFV/100;
+				mIPV = mIPV/100;
+				r1   /= 100;
+				r2   /= 100;
+				r3   /= 100;
+				if(r1 > max) max = r1;
+				if(r2 > max) max = r2;
+				if(r3 > max) max = r3; 
+				
+				std::cout.precision(4);
+				std::cout << size << " " << mIIV << " " << mIFV << " " << mIPV << " " << r1 << " " << r2 << " " << r3 << std::endl;
+				saida << size << " " << r1 << " " << r2 << " " << r3 << endl;
+				r1 = 0;
+				r2 = 0;
+				r3 = 0;
+				
+				//Aumentando a amostra em Progressão Aritmética
+				size = size + passo;
+
+			}
+			//Gerar o arquivo relatorio.gnuplot
+			gerarGnuSet2("IV", "Inserir no Vetor", inicial, maximo, max);
+			break;
+
+		case 10:
+			std::cout << "# Arquivo Gnuplot para inserir na lista" << std::endl;
+			std::cout << "# N Passos" << std::endl;
+			saida.open("./data/IL.dat");
+
+			//Inicializando tamanhos
+			inicial =  10000; 
+			size    = inicial;
+			maximo  = 100000;
+			passo   =  10000;
+			
+			while(size <= maximo){
+				
+				for(int j = 0; j < 100; j++){
+					long int el = rand()%1000;
+
+					auto sIIL = std::chrono::steady_clock::now();
+					//========================================================================================
+					r1 += B->InsereInicio(el);
+					//========================================================================================
+					auto eIIL = std::chrono::steady_clock::now();
+					auto dIIL = eIIL - sIIL;
+					mIIL = mIIL + std::chrono::duration <double, std::milli> (dIIL).count();
+
+					auto sIFL = std::chrono::steady_clock::now();
+					//========================================================================================
+					r2 += B->InsereFim(el);
+					//========================================================================================
+					auto eIFL = std::chrono::steady_clock::now();
+					auto dIFL = eIFL - sIFL;
+					mIFL = mIFL + std::chrono::duration <double, std::milli> (dIFL).count();
+
+					auto sIPL = std::chrono::steady_clock::now();
+					//========================================================================================
+					if(j == 0)
+						r3 += B->InserePos(el, j);
+					else
+						r3 += B->InserePos(el, rand()%j);
+					//========================================================================================
+					auto eIPL = std::chrono::steady_clock::now();
+					auto dIPL = eIPL - sIPL;
+					mIPL = mIPL + std::chrono::duration <double, std::milli> (dIPL).count();
+				}
+				//Aumentando a amostra em Progressão Aritmética
+				size = size + passo;
+			
+				//Médias
+				mIIL = mIIL/100;
+				mIFL = mIFL/100;
+				mIPL = mIPL/100;
+				r1   /= 100;
+				r2   /= 100;
+				r3   /= 100;
+				if(r1 > max) max = r1;
+				if(r2 > max) max = r2;
+				if(r3 > max) max = r3; 
+				
+				std::cout.precision(4);
+				std::cout << size << " " << mIIL << " " << mIFL << " " << mIPL << " " << r1 << " " << r2 << " " << r3 << std::endl;
+				saida << size << " " << r1 << " " << r2 << " " << r3 << endl;
+				r1 = 0;
+				r2 = 0;
+				r3 = 0;
+			}
+
+			//Gerar o arquivo relatorio.gnuplot
+			gerarGnuSet2("IL", "Inserir na Lista", inicial, maximo, max);
+			break;
 
 		default:
 			std::cout << "Entrada inválida" << std::endl;

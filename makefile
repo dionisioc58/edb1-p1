@@ -18,7 +18,7 @@ BIN_DIR = ./bin
 # Outras variaveis
 
 # Opcoes de compilacao
-CFLAGS = -Wall -pedantic -ansi -std=c++11 -I. -I$(INC_DIR)
+CFLAGS = -Wall -ansi -std=c++11 -I. -I$(INC_DIR)
 
 # Garante que os alvos desta lista nao sejam confundidos com arquivos de mesmo nome
 .PHONY: all clean distclean
@@ -40,8 +40,8 @@ lab01: $(OBJ_DIR)/lab01.o
 	@echo "============="
 
 # Alvo (target) para a construcao do objeto lab01.o
-# Define o arquivo lab01.cpp e vetores.h como dependencias.
-$(OBJ_DIR)/lab01.o: $(SRC_DIR)/lab01.cpp $(INC_DIR)/vetores.h
+# Define o arquivo lab01.cpp e search_sort.h como dependencias.
+$(OBJ_DIR)/lab01.o: $(SRC_DIR)/lab01.cpp $(INC_DIR)/search_sort.h
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 # Alvo (target) usado para limpar os arquivos temporarios (objeto)
