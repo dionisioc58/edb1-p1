@@ -34,7 +34,9 @@
         long InsereInicio(T valor);                         /**< Insere um valor no início da lista */
         long InsereFim(T valor);                            /**< Insere um valor no fim da lista */
         long InserePos(T valor, long pos);                  /**< Insere um valor em uma posição da lista */
-        void RemovePos(int pos);                            /**< Remove um valor na posição informada */
+        long RemoveInicio();                                /**< Remove um valor do início da lista */
+        long RemoveFim();                                   /**< Remove um valor do fim da lista */
+        long RemovePos(int pos);                            /**< Remove um valor da posição informada */
         void RemoveVal(T *valor);                           /**< Remove um valor específico */
         Lista *Busca(T *valor);                             /**< Procura um valor e retorna o nó */
         T *Posiciona(int pos);                              /**< Retorna o elemento na posição dada */
@@ -191,25 +193,71 @@
     }
 
     /**
+    * @details Remove um valor do início da lista
+    */
+    template<typename T>
+    long Lista<T>::RemoveInicio() {
+        long contagem = 1;
+        contagem++;
+        Lista *remove = prox;
+        contagem++;
+        if(remove)
+            this->prox = remove->prox;
+        contagem++;
+        remove->prox = NULL;
+        delete remove;
+        return ++contagem;
+    }
+
+    /**
+    * @details Remove um valor do fim da lista
+    */
+    template<typename T>
+    long Lista<T>::RemoveFim() {
+        long contagem = 1;
+        contagem++;
+        Lista *remove = this;
+        contagem++;
+        while(remove->prox) {
+            contagem++;
+            remove = remove->prox;
+        }
+        contagem++;
+        if(remove->prox)
+            delete remove->prox;
+        return ++contagem;
+    }
+
+    /**
     * @details Remove um valor na posição informada
     */
     template<typename T>
-    void Lista<T>::RemovePos(int pos) {
+    long Lista<T>::RemovePos(int pos) {
+        long contagem = 1;
         if(pos < 0)
-            return;
+            return ++contagem;
+        contagem++;
         Lista *atual = this;
+        contagem++;
         Lista *remove = prox;
+        contagem++;
         for(int i = 0; i < pos; i++) {
+            contagem++;
             if(remove) {
                 atual = remove;
                 remove = remove->prox;
             }
         }
         if(remove) {
+            contagem++;
             atual->prox = remove->prox; //Relinka o anterior ao próximo
+            contagem++;
             remove->prox = NULL;        //Para não remover todos os próximos através do destrutor padrão
+            contagem++;
             delete remove;
+            contagem++;
         }
+        return ++contagem;
     }
 
     /**

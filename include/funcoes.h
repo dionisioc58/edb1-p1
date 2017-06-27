@@ -9,7 +9,7 @@
             return ++contagem;
 
         for(long i = 0; i < (tam - 1); i++) {
-            v[i+1] = v[i];
+            v[i + 1] = v[i];
             contagem++;
         }
 
@@ -34,12 +34,48 @@
             return ++contagem;
 
         for(long i = pos; i < (tam - 1); i++) {
-            v[i+1] = v[i];
+            v[i + 1] = v[i];
             contagem++;
         }
 
         v[pos] = el;
         
+        return ++contagem;
+    }
+
+    long RemoverInicioV(long *v, long tam) {
+        long contagem = 1;
+        if(tam < 0)
+            return ++contagem;
+
+        for(long i = 0; i < (tam - 1); i++) {
+            v[i] = v[i + 1];
+            contagem++;
+        }
+
+        return ++contagem;
+    }
+
+    long RemoverFimV(long *v, long tam, long n) {
+        long contagem = 1;
+        if(tam < 0) 
+            return ++contagem;
+
+        v[n] = -1;
+        
+        return ++contagem;
+    }
+
+    long RemoverPosV(long *v, long tam, long pos) {
+        long contagem = 1;
+        if((tam < 0) || (pos > tam))
+            return ++contagem;
+
+        for(long i = pos; i < (tam - 1); i++) {
+            v[i] = v[i + 1];
+            contagem++;
+        }
+
         return ++contagem;
     }
 

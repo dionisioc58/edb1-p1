@@ -72,9 +72,9 @@ bool gerarGnuSet2(string nome, string titulo, int min_x, int max_x, int max_y) {
 	saida << "set yrange[0:";
 	saida << (max_y+10);
 	saida << "]" << endl;
-	saida << "plot './data/" + nome + ".dat' using 1:2 title 'Inserir no Início' lw 2 with lines, ";
-	saida <<      "'./data/" + nome + ".dat' using 1:3 title 'Inserir no Fim' lw 2 with lines, ";
-	saida <<      "'./data/" + nome + ".dat' using 1:4 title 'Inserir Aleatório' lw 2 with lines" << endl;
+	saida << "plot './data/" + nome + ".dat' using 1:2 title 'No Início' lw 2 with lines, ";
+	saida <<      "'./data/" + nome + ".dat' using 1:3 title 'No Fim' lw 2 with lines, ";
+	saida <<      "'./data/" + nome + ".dat' using 1:4 title 'Posição Aleatória' lw 2 with lines" << endl;
 	saida.close();
 
 	//Executar o gnuplot e gerar o arquivo de imagem
@@ -92,7 +92,7 @@ int main(){
 	ofstream saida;
 	double mBSI1 = 0, mBSI2 = 0, mBSI3 = 0, mBSR1 = 0, mBSR2 = 0, mBSR3 = 0, mBBI1 = 0, mBBI2 = 0, mBBI3 = 0, mBBR1 = 0, mBBR2 = 0, mBBR3 = 0;
 	double mSSI1 = 0, mSSI2 = 0, mSSI3 = 0, mISI1 = 0, mISI2 = 0, mISI3 = 0, mQSR1 = 0, mQSR2 = 0, mQSR3 = 0, mMSR1 = 0, mMSR2 = 0, mMSR3 = 0;
-	double mIIV  = 0, mIFV  = 0, mIPV  = 0, mIIL  = 0, mIFL  = 0, mIPL  = 0;
+	double mIIV  = 0, mIFV  = 0, mIPV  = 0, mRIV  = 0, mRFV  = 0, mRPV  = 0, mIIL  = 0, mIFL  = 0, mIPL  = 0, mRIL  = 0, mRFL  = 0, mRPL  = 0;
 	
 	srand((unsigned)time(0));
 
@@ -107,6 +107,8 @@ int main(){
 	std::cout << "(8) Merge Sort Recursivo." << std::endl;
 	std::cout << "(9) Inserir no VETOR (início/fim/aleatório)" << std::endl;
 	std::cout << "(10) Inserir na LISTA LIGADA (início/fim/aleatório)" << std::endl;
+	std::cout << "(11) Remover do VETOR (início/fim/aleatório)" << std::endl;
+	std::cout << "(12) Remover da LISTA LIGADA (início/fim/aleatório)" << std::endl;
 
 	std::cin >> opcao;
 
@@ -957,6 +959,153 @@ int main(){
 
 			//Gerar o arquivo relatorio.gnuplot
 			gerarGnuSet2("IL", "Inserir na Lista", inicial, maximo, max);
+			break;
+
+		case 11:
+			std::cout << "# Arquivo Gnuplot para remover do vetor" << std::endl;
+			std::cout << "# N Passos" << std::endl;
+			saida.open("./data/RV.dat");
+
+			//Inicializando tamanhos
+			inicial =  10000; 
+			size    = inicial;
+			maximo  = 100000;
+			passo   =  10000;
+
+			while(size <= maximo){
+				delete[] A;
+				A = new long int[size];
+
+				//Verificando a média (100 repetições)
+				for(int j = 0; j < 100; j++){
+					//Preenchendo o Array A
+					for(i = 0; i < size; i++){
+						A[i] = rand()%1000;
+					}
+					
+					auto sRIV = std::chrono::steady_clock::now();
+					//========================================================================================
+					r1 += RemoverInicioV(A, size);
+					//========================================================================================
+					auto eRIV = std::chrono::steady_clock::now();
+					auto dRIV = eRIV - sRIV;
+					mRIV = mRIV + std::chrono::duration <double, std::milli> (dRIV).count();
+
+					auto sRFV = std::chrono::steady_clock::now();
+					//========================================================================================
+					r2 += RemoverFimV(A, size, j);
+					//========================================================================================
+					auto eRFV = std::chrono::steady_clock::now();
+					auto dRFV = eRFV - sRFV;
+					mRFV = mRFV + std::chrono::duration <double, std::milli> (dRFV).count();
+
+					auto sRPV = std::chrono::steady_clock::now();
+					//========================================================================================
+					r3 += RemoverPosV(A, size, rand()%size);
+					//========================================================================================
+					auto eRPV = std::chrono::steady_clock::now();
+					auto dRPV = eRPV - sRPV;
+					mRPV = mRPV + std::chrono::duration <double, std::milli> (dRPV).count();
+				}
+
+				//Médias
+				mRIV = mRIV/100;
+				mRFV = mRFV/100;
+				mRPV = mRPV/100;
+				r1   /= 100;
+				r2   /= 100;
+				r3   /= 100;
+				if(r1 > max) max = r1;
+				if(r2 > max) max = r2;
+				if(r3 > max) max = r3; 
+				
+				std::cout.precision(4);
+				std::cout << size << " " << mRIV << " " << mRFV << " " << mRPV << " " << r1 << " " << r2 << " " << r3 << std::endl;
+				saida << size << " " << r1 << " " << r2 << " " << r3 << endl;
+				r1 = 0;
+				r2 = 0;
+				r3 = 0;
+				
+				//Aumentando a amostra em Progressão Aritmética
+				size = size + passo;
+
+			}
+			//Gerar o arquivo relatorio.gnuplot
+			gerarGnuSet2("RV", "Remover no Vetor", inicial, maximo, max);
+			break;
+
+		case 12:
+			std::cout << "# Arquivo Gnuplot para remove da lista" << std::endl;
+			std::cout << "# N Passos" << std::endl;
+			saida.open("./data/RL.dat");
+
+			//Inicializando tamanhos
+			inicial =  10000; 
+			size    = inicial;
+			maximo  = 100000;
+			passo   =  10000;
+			
+			while(size <= maximo){
+				delete B;
+				B = new Lista<long>();
+				//Preenchendo o Array A
+				for(i = 0; i < size; i++){
+					B->InsereInicio(rand()%1000);
+				}
+				for(int j = 0; j < 100; j++){
+					
+					auto sRIL = std::chrono::steady_clock::now();
+					//========================================================================================
+					r1 += B->RemoveInicio();
+					//========================================================================================
+					auto eRIL = std::chrono::steady_clock::now();
+					auto dRIL = eRIL - sRIL;
+					mRIL = mRIL + std::chrono::duration <double, std::milli> (dRIL).count();
+
+					auto sRFL = std::chrono::steady_clock::now();
+					//========================================================================================
+					r2 += B->RemoveFim();
+					//========================================================================================
+					auto eRFL = std::chrono::steady_clock::now();
+					auto dRFL = eRFL - sRFL;
+					mRFL = mRFL + std::chrono::duration <double, std::milli> (dRFL).count();
+
+					auto sRPL = std::chrono::steady_clock::now();
+					//========================================================================================
+					int k = B->getTamanho();
+					if(k == 0)
+						r3 += B->RemovePos(k);
+					else
+						r3 += B->RemovePos(rand()%k);
+					//========================================================================================
+					auto eRPL = std::chrono::steady_clock::now();
+					auto dRPL = eRPL - sRPL;
+					mRPL = mRPL + std::chrono::duration <double, std::milli> (dRPL).count();
+				}
+				//Aumentando a amostra em Progressão Aritmética
+				size = size + passo;
+			
+				//Médias
+				mRIL = mRIL/100;
+				mRFL = mRFL/100;
+				mRPL = mRPL/100;
+				r1   /= 100;
+				r2   /= 100;
+				r3   /= 100;
+				if(r1 > max) max = r1;
+				if(r2 > max) max = r2;
+				if(r3 > max) max = r3; 
+				
+				std::cout.precision(4);
+				std::cout << size << " " << mRIL << " " << mRFL << " " << mRPL << " " << r1 << " " << r2 << " " << r3 << std::endl;
+				saida << size << " " << r1 << " " << r2 << " " << r3 << endl;
+				r1 = 0;
+				r2 = 0;
+				r3 = 0;
+			}
+
+			//Gerar o arquivo relatorio.gnuplot
+			gerarGnuSet2("RL", "Remover da Lista", inicial, maximo, max);
 			break;
 
 		default:
