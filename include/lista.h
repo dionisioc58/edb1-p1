@@ -165,7 +165,6 @@
             return ++contagem;
         }
 
-        //novo->dado = valor;
         //BUSCAR A POSIÇÃO PARA INSERIR
         contagem++;
         Lista *tmp = this;

@@ -9,5 +9,5 @@ set xtics 4500
 set xlabel 'Tamanho do vetor'
 set ylabel 'Número de passos'
 set xtic rotate by -90 scale 0
-set yrange[0:3933]
-plot './data/IL.dat' using 1:2 title 'Inserir no Início' lw 2 with lines, './data/IL.dat' using 1:3 title 'Inserir no Fim' lw 2 with lines, './data/IL.dat' using 1:4 title 'Inserir Aleatório' lw 2 with lines
+set yrange[0:3825]
+plot './data/IL.dat' using 1:2 title 'No Início' lw 2 with lines, './data/IL.dat' using 1:3 title 'No Fim' lw 2 with lines, './data/IL.dat' using 1:4 title 'Posição Aleatória' lw 2 with lines

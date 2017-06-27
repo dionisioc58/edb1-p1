@@ -926,10 +926,11 @@ int main(){
 
 					auto sIPL = std::chrono::steady_clock::now();
 					//========================================================================================
-					if(j == 0)
-						r3 += B->InserePos(el, j);
+					int k = B->getTamanho();
+					if(k == 0)
+						r3 += B->InserePos(el, k);
 					else
-						r3 += B->InserePos(el, rand()%j);
+						r3 += B->InserePos(el, rand()%k);
 					//========================================================================================
 					auto eIPL = std::chrono::steady_clock::now();
 					auto dIPL = eIPL - sIPL;
